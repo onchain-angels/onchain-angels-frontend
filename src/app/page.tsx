@@ -134,7 +134,7 @@ export default function Page() {
 
   return (
     <div className='flex h-full w-96 max-w-full flex-col px-1 font-sans md:w-[1008px]'>
-      <section className='mt-6 mb-6 flex w-full flex-col md:flex-row'>
+      <section className='mt-4 mb-4 flex w-full flex-col md:flex-row'>
         <div className='flex w-full flex-row items-center justify-between gap-2 md:gap-0'>
           <span className="text-4xl font-bold dark:text-white text-black">
             👼 OnchainAngels
