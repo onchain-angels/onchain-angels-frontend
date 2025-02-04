@@ -9,6 +9,7 @@ export async function GET(
 ) {
     try {
         const response = await fetch(`${API_URL}/wallets/address/${params.address}`, {
+            cache: 'no-store',
             headers: {
                 'Authorization': `Bearer ${AUTH_TOKEN}`,
             },

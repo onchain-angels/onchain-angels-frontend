@@ -1,3 +1,5 @@
+export const fetchCache = 'force-no-store';
+
 export interface WalletProfile {
     id: number;
     address: string;
@@ -57,8 +59,7 @@ export async function saveWalletProfile(data: SaveWalletData) {
 
 export async function getWalletProfile(address: string): Promise<WalletProfile | null> {
     try {
-        const timestamp = Date.parse(new Date().toString());
-        const response = await fetch(`/api/wallets/profile/${address}?timestamp=${timestamp}`, { cache: 'no-store' });
+        const response = await fetch(`/api/wallets/profile/${address}`);
 
         if (response.status === 404) {
             return null;
