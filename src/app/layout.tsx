@@ -19,12 +19,27 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Base Profile',
-  description: 'Built with OnchainKit',
+  title: 'Onchain Angels',
+  description: 'Onchain Angels Platform',
   openGraph: {
     title: 'Base Profile',
     description: 'Built with OnchainKit',
     images: [`${NEXT_PUBLIC_URL}/vibes/vibes-19.png`],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-icon.png' },
+    ],
+    other: [
+      {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/apple-touch-icon-precomposed.png',
+      },
+    ],
   },
 };
 
