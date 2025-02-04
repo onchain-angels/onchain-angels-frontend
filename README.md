@@ -31,7 +31,7 @@ NEXT_PUBLIC_WC_PROJECT_ID="GET_FROM_WALLET_CONNECT"
 ## Locally run
 
 ```sh
-# Install bun in case you don't have it
+# Install bun in case you don't have it 
 curl -fsSL https://bun.sh/install | bash
 
 # Install packages
