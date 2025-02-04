@@ -4,6 +4,7 @@ import { NEXT_PUBLIC_URL } from '../config';
 import './global.css';
 import '@coinbase/onchainkit/styles.css';
 import dynamic from 'next/dynamic';
+import { Toaster } from 'react-hot-toast';
 
 const OnchainProviders = dynamic(
   () => import('src/components/OnchainProviders'),
@@ -34,6 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="flex items-center justify-center">
         <OnchainProviders>{children}</OnchainProviders>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

@@ -6,18 +6,50 @@ import WalletWrapper from 'src/components/WalletWrapper';
 import { motion } from 'framer-motion';
 import { FaXTwitter } from "react-icons/fa6";
 import { SiFarcaster } from "react-icons/si";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RiskProfileForm, { defaultRiskProfile, RiskProfile } from 'src/components/RiskProfileForm';
-import { saveWalletProfile } from 'src/services/api';
+import { saveWalletProfile, updateWalletProfile, type WalletProfile, getWalletProfile, deleteWalletProfile } from 'src/services/api';
+import { toast } from 'react-hot-toast';
 
 export default function Page() {
   const { isConnected, address } = useAccount();
+  const [isLoading, setIsLoading] = useState(true);
   const [twitterHandle, setTwitterHandle] = useState('');
   const [farcasterHandle, setFarcasterHandle] = useState('');
-  const [totalRiskPercentage, setTotalRiskPercentage] = useState(100); // começa com 100 por causa do default
+  const [totalRiskPercentage, setTotalRiskPercentage] = useState(100);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [riskProfile, setRiskProfile] = useState<RiskProfile>(defaultRiskProfile);
+  const [hasExistingProfile, setHasExistingProfile] = useState(false);
+  const [profileData, setProfileData] = useState<WalletProfile | null>(null);
+
+  useEffect(() => {
+    async function loadWalletProfile() {
+      if (!address) return;
+
+      try {
+        setIsLoading(true);
+        const profile = await getWalletProfile(address);
+        if (profile) {
+          setProfileData(profile);
+          setTwitterHandle(profile.twitter_handle);
+          setFarcasterHandle(profile.farcaster_handle);
+          setRiskProfile(profile.portfolio);
+          setHasExistingProfile(true);
+          setTotalRiskPercentage(
+            Object.values(profile.portfolio).reduce((acc, curr) => acc + curr, 0)
+          );
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        toast.error('Error loading profile');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadWalletProfile();
+  }, [address]);
 
   const isFormValid = twitterHandle.trim() !== '' &&
     farcasterHandle.trim() !== '' &&
@@ -30,18 +62,49 @@ export default function Page() {
     setSubmitError(null);
 
     try {
-      const response = await saveWalletProfile({
+      const data = {
         address,
         twitter_handle: twitterHandle,
         farcaster_handle: farcasterHandle,
         portfolio: riskProfile
-      });
+      };
 
-      console.log('Profile saved successfully!', response);
-
+      if (hasExistingProfile && profileData?.id) {
+        // Atualizar perfil existente
+        const updatedProfile = await updateWalletProfile(profileData.id, data);
+        setProfileData(updatedProfile);
+        toast.success('Profile updated successfully!');
+      } else {
+        // Criar novo perfil
+        const newProfile = await saveWalletProfile(data);
+        setProfileData(newProfile);
+        setHasExistingProfile(true);
+        toast.success('Profile created successfully!');
+      }
     } catch (error) {
       setSubmitError('Failed to save profile. Please try again.');
       console.error('Error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!profileData?.id) return;
+
+    try {
+      setIsSubmitting(true);
+      await deleteWalletProfile(profileData.id);
+      // Limpar os estados
+      setProfileData(null);
+      setTwitterHandle('');
+      setFarcasterHandle('');
+      setRiskProfile(defaultRiskProfile);
+      setHasExistingProfile(false);
+      toast.success('Profile deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+      toast.error('Error deleting profile');
     } finally {
       setIsSubmitting(false);
     }
@@ -58,12 +121,16 @@ export default function Page() {
     return errors.join(' • ');
   };
 
-  const handleProfileChange = (total: number, profile: RiskProfile) => {
+  const handleProfileUpdate = ({
+    total,
+    profile,
+  }: {
+    total: number;
+    profile: RiskProfile;
+  }) => {
     setTotalRiskPercentage(total);
     setRiskProfile(profile);
   };
-
-  console.log('Endereço da wallet:', address);
 
   return (
     <div className='flex h-full w-96 max-w-full flex-col px-1 font-sans md:w-[1008px]'>
@@ -116,18 +183,42 @@ export default function Page() {
                 </div>
               </div>
 
-              <RiskProfileForm onProfileChange={handleProfileChange} />
+              {address && (
+                <RiskProfileForm
+                  onProfileUpdate={handleProfileUpdate}
+                  initialProfile={riskProfile}
+                  isLoading={isLoading}
+                />
+              )}
 
-              <button
-                onClick={handleSubmit}
-                className={`rounded-lg px-4 py-2 text-white w-full ${isFormValid && !isSubmitting
-                  ? 'bg-blue-500 hover:bg-blue-600'
-                  : 'bg-gray-400 cursor-not-allowed'
-                  }`}
-                disabled={!isFormValid || isSubmitting}
-              >
-                {isSubmitting ? 'Saving...' : 'Save'}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSubmit}
+                  className={`rounded-lg px-4 py-2 text-white grow ${isFormValid && !isSubmitting
+                    ? 'bg-blue-500 hover:bg-blue-600'
+                    : 'bg-gray-400 cursor-not-allowed'
+                    }`}
+                  disabled={!isFormValid || isSubmitting}
+                >
+                  {isSubmitting
+                    ? 'Saving...'
+                    : hasExistingProfile
+                      ? 'Update Profile'
+                      : 'Create Profile'
+                  }
+                </button>
+
+                {hasExistingProfile && (
+                  <button
+                    onClick={handleDelete}
+                    className={`rounded-lg px-4 py-2 text-white bg-red-500 hover:bg-red-600 ${isSubmitting ? 'cursor-not-allowed opacity-50' : ''
+                      }`}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Deleting...' : 'Delete Profile'}
+                  </button>
+                )}
+              </div>
 
               <div className="h-8">
                 {!isFormValid && (

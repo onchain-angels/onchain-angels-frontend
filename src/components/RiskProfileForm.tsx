@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PiChartPieSliceFill } from "react-icons/pi";
+import { saveWalletProfile, getWalletProfile, deleteWalletProfile } from '../services/api';
+import type { WalletProfile, SaveWalletData } from '../services/api';
+import { toast } from 'react-hot-toast';
 
 export interface RiskProfile {
     majors: number;
@@ -16,11 +19,24 @@ export const defaultRiskProfile: RiskProfile = {
 };
 
 interface RiskProfileFormProps {
-    onProfileChange: (total: number, profile: RiskProfile) => void;
+    onProfileUpdate: (data: {
+        total: number,
+        profile: RiskProfile,
+    }) => void;
+    initialProfile?: RiskProfile;
+    isLoading?: boolean;
 }
 
-export default function RiskProfileForm({ onProfileChange }: RiskProfileFormProps) {
-    const [riskProfile, setRiskProfile] = useState<RiskProfile>(defaultRiskProfile);
+export default function RiskProfileForm({
+    onProfileUpdate,
+    initialProfile = defaultRiskProfile,
+    isLoading = false
+}: RiskProfileFormProps) {
+    const [riskProfile, setRiskProfile] = useState<RiskProfile>(initialProfile);
+
+    useEffect(() => {
+        setRiskProfile(initialProfile);
+    }, [initialProfile]);
 
     const handleSliderChange = (category: keyof RiskProfile, value: number) => {
         const newProfile = {
@@ -29,10 +45,17 @@ export default function RiskProfileForm({ onProfileChange }: RiskProfileFormProp
         };
         setRiskProfile(newProfile);
         const total = Object.values(newProfile).reduce((acc, curr) => acc + curr, 0);
-        onProfileChange(total, newProfile);
+        onProfileUpdate({
+            total,
+            profile: newProfile,
+        });
     };
 
     const totalPercentage = Object.values(riskProfile).reduce((acc, curr) => acc + curr, 0);
+
+    if (isLoading) {
+        return <div>Carregando...</div>;
+    }
 
     return (
         <div className="w-full">
