@@ -57,7 +57,7 @@ export async function saveWalletProfile(data: SaveWalletData) {
 
 export async function getWalletProfile(address: string): Promise<WalletProfile | null> {
     try {
-        const response = await fetch(`/api/wallets/profile/${address}`);
+        const response = await fetch(`/api/wallets/profile/${address}`, { cache: 'no-store' });
 
         if (response.status === 404) {
             return null;
