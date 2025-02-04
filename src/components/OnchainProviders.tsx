@@ -18,11 +18,18 @@ function OnchainProviders({ children }: Props) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <OnchainKitProvider apiKey={NEXT_PUBLIC_CDP_API_KEY} chain={base}
+        <OnchainKitProvider
+          apiKey={NEXT_PUBLIC_CDP_API_KEY}
+          // @ts-ignore
+          chain={base}
           config={{
+            // appearance: {
+            //   mode: 'auto',
+            //   theme: 'base', 
+            // },
             appearance: {
               name: 'Onchain Angels',        // Displayed in modal header
-              // logo: 'https://your-logo.com',// Displayed in modal header
+              logo: '👼',                    // Displayed in modal header
               mode: 'auto',                 // 'light' | 'dark' | 'auto'
               theme: 'default',             // 'default' or custom theme
             },
@@ -31,14 +38,8 @@ function OnchainProviders({ children }: Props) {
               termsUrl: 'https://...',
               privacyUrl: 'https://...',
             },
-
-            // appearance: {
-            //   mode: 'auto',
-            //   theme: 'base', 
-            // },
-          }
-
-          }>
+          }}
+        >
           <RainbowKitProvider modalSize="compact">
             {children}
           </RainbowKitProvider>

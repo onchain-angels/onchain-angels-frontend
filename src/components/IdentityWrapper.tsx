@@ -1,7 +1,7 @@
-import { IdentityCard } from '@coinbase/onchainkit/identity'; 
+import { IdentityCard } from '@coinbase/onchainkit/identity';
 import { base } from 'viem/chains';
 import { useAccount } from 'wagmi';
-    
+
 export default function IdentityWrapper() {
   const { address } = useAccount();
 
@@ -9,7 +9,8 @@ export default function IdentityWrapper() {
     <IdentityCard
       address={address}
       schemaId={address}
+      // @ts-ignore
       chain={base}
-    /> 
+    />
   );
 }
