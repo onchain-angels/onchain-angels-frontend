@@ -25,21 +25,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Onchain Angels',
     description: 'AI-powered financial coach that helps traders make smarter decisions by responding to on-chain actions with behavioral insights. Like an "angel on your shoulder", it provides timely nudges to keep you aligned with your financial goals.',
-    images: [`${NEXT_PUBLIC_URL}/vibes/vibes-19.png`],
+    images: [`${NEXT_PUBLIC_URL}/logo.png`],
   },
   icons: {
     icon: [
       { url: '/favicon.ico' },
-      { url: '/icon.png', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-icon.png' },
-    ],
-    other: [
-      {
-        rel: 'apple-touch-icon-precomposed',
-        url: '/apple-touch-icon-precomposed.png',
-      },
     ],
   },
 };
