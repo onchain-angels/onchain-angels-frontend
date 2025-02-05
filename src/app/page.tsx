@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import RiskProfileForm, { defaultRiskProfile, RiskProfile } from 'src/components/RiskProfileForm';
 import { saveWalletProfile, updateWalletProfile, type WalletProfile, getWalletProfile, deleteWalletProfile } from 'src/services/api';
 import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 
 export default function Page() {
   const { isConnected, address } = useAccount();
@@ -188,6 +189,29 @@ export default function Page() {
                   initialProfile={riskProfile}
                   isLoading={isLoading}
                 />
+              )}
+
+              {!hasExistingProfile && (
+                <p className="text-xs text-gray-600 text-center">
+                  By creating a profile, you agree to our{' '}
+                  <Link
+                    href="/terms"
+                    className="text-blue-600 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms of Service
+                  </Link>
+                  {' '}and{' '}
+                  <Link
+                    href="/privacy"
+                    className="text-blue-600 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Privacy Policy
+                  </Link>
+                </p>
               )}
 
               <div className="flex gap-2">

@@ -133,8 +133,8 @@ export default function RiskProfileForm({
                     />
                 </div>
 
-                <div className={`text-sm font-medium ${totalPercentage === 100 ? 'text-green-600' : 'text-red-600'}`}>
-                    Total: {totalPercentage}% {totalPercentage !== 100 && '(deve somar 100%)'}
+                <div className={`text-sm font-bold ${totalPercentage === 100 ? 'text-green-600' : 'text-red-600'}`}>
+                    Total: {totalPercentage}% {totalPercentage !== 100 && '(must total 100%)'}
                 </div>
             </div>
         </div>
