@@ -2,8 +2,7 @@
 import { useAccount } from 'wagmi';
 import Footer from 'src/components/Footer';
 import IdentityWrapper from 'src/components/IdentityWrapper';
-import WalletWrapper from 'src/components/WalletWrapper';
-import { motion } from 'framer-motion';
+import LoginButton from 'src/components/LoginButton';
 import { FaXTwitter } from "react-icons/fa6";
 import { SiFarcaster } from "react-icons/si";
 import { useState, useEffect } from 'react';
@@ -140,7 +139,7 @@ export default function Page() {
             👼 OnchainAngels
           </span>
           <div className="flex items-center gap-3">
-            <WalletWrapper />
+            <LoginButton />
           </div>
         </div>
       </section>

@@ -1,48 +1,57 @@
+'use client';
+import {
+  Address,
+  Avatar,
+  EthBalance,
+  Identity,
+  Name,
+} from '@coinbase/onchainkit/identity';
 import {
   ConnectWallet,
   Wallet,
   WalletDropdown,
-  WalletDropdownLink,
+  WalletDropdownBasename,
   WalletDropdownDisconnect,
+  WalletDropdownFundLink,
+  WalletDropdownLink,
 } from '@coinbase/onchainkit/wallet';
-import {
-  Address,
-  Avatar,
-  Name,
-  Identity,
-  EthBalance,
-} from '@coinbase/onchainkit/identity';
 
-export default function Header() {
-return (
-  <header className="pt-4 pr-4">
-    <div className="flex justify-end">
-        <div className="wallet-container flex space-x-2">
-          <Wallet>
-            <ConnectWallet>
-              <Avatar className="h-6 w-6" />
-              <Name className="text-white" />
-            </ConnectWallet>
-            <WalletDropdown>
-              <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick={true}>
-                <Avatar />
-                <Name />
-                <Address />
-                <EthBalance />
-              </Identity>
-              <WalletDropdownLink
-                icon="wallet"
-                href="https://keys.coinbase.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Wallet
-              </WalletDropdownLink>
-              <WalletDropdownDisconnect />
-            </WalletDropdown>
-          </Wallet>
-        </div>
-      </div>
-  </header>
-);
+type WalletWrapperParams = {
+  text?: string;
+  className?: string;
+  withWalletAggregator?: boolean;
+};
+export default function WalletWrapper({
+  className,
+  text,
+  withWalletAggregator = false,
+}: WalletWrapperParams) {
+  return (
+    <>
+      <Wallet>
+        <ConnectWallet
+          withWalletAggregator={withWalletAggregator}
+          text={text}
+          className={className}
+        >
+          <Avatar className="h-6 w-6" />
+          <Name />
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick={true}>
+            <Avatar />
+            <Name />
+            <Address />
+            <EthBalance />
+          </Identity>
+          <WalletDropdownBasename />
+          <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com">
+            Go to Wallet Dashboard
+          </WalletDropdownLink>
+          <WalletDropdownFundLink />
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
+    </>
+  );
 }
