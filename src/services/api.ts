@@ -3,9 +3,9 @@ export const fetchCache = 'force-no-store';
 export interface WalletProfile {
     id: number;
     address: string;
-    twitter_handle: string;
-    farcaster_handle: string;
-    portfolio: {
+    twitter_handle: string | null;
+    farcaster_handle: string | null;
+    target_portfolio: {
         majors: number;
         stables: number;
         alts: number;
@@ -13,22 +13,22 @@ export interface WalletProfile {
     };
 }
 
-export interface SaveWalletData {
+export type SaveWalletData = {
     address: string;
-    twitter_handle: string;
-    farcaster_handle: string;
-    portfolio: {
+    twitter_handle: string | null;
+    farcaster_handle: string | null;
+    target_portfolio: {
         majors: number;
         stables: number;
         alts: number;
         memes: number;
     };
-}
+};
 
 export interface UpdateWalletData {
-    twitter_handle: string;
-    farcaster_handle: string;
-    portfolio: {
+    twitter_handle: string | null;
+    farcaster_handle: string | null;
+    target_portfolio: {
         majors: number;
         stables: number;
         alts: number;
@@ -47,7 +47,8 @@ export async function saveWalletProfile(data: SaveWalletData) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw errorData;
         }
 
         return await response.json();
@@ -99,7 +100,8 @@ export async function updateWalletProfile(id: number, data: UpdateWalletData) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw errorData;
         }
 
         return await response.json();

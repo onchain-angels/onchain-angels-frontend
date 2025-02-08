@@ -1,8 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { PiChartPieSliceFill } from "react-icons/pi";
-import { saveWalletProfile, getWalletProfile, deleteWalletProfile } from '../services/api';
-import type { WalletProfile, SaveWalletData } from '../services/api';
-import { toast } from 'react-hot-toast';
 
 export interface RiskProfile {
     majors: number;
@@ -54,7 +51,7 @@ export default function RiskProfileForm({
     const totalPercentage = Object.values(riskProfile).reduce((acc, curr) => acc + curr, 0);
 
     if (isLoading) {
-        return <div>Carregando...</div>;
+        return <div>Loading...</div>;
     }
 
     return (

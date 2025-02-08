@@ -45,7 +45,8 @@ export async function PATCH(
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            return NextResponse.json(errorData, { status: response.status });
         }
 
         const result = await response.json();

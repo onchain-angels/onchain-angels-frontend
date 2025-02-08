@@ -14,8 +14,8 @@ import Link from 'next/link';
 export default function Page() {
   const { isConnected, address } = useAccount();
   const [isLoading, setIsLoading] = useState(true);
-  const [twitterHandle, setTwitterHandle] = useState('');
-  const [farcasterHandle, setFarcasterHandle] = useState('');
+  const [socialType, setSocialType] = useState<'twitter' | 'farcaster'>('twitter');
+  const [socialHandle, setSocialHandle] = useState('');
   const [totalRiskPercentage, setTotalRiskPercentage] = useState(100);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -32,12 +32,17 @@ export default function Page() {
         const profile = await getWalletProfile(address);
         if (profile) {
           setProfileData(profile);
-          setTwitterHandle(profile.twitter_handle);
-          setFarcasterHandle(profile.farcaster_handle);
-          setRiskProfile(profile.portfolio);
+          if (profile.twitter_handle) {
+            setSocialType('twitter');
+            setSocialHandle(profile.twitter_handle);
+          } else if (profile.farcaster_handle) {
+            setSocialType('farcaster');
+            setSocialHandle(profile.farcaster_handle);
+          }
+          setRiskProfile(profile.target_portfolio);
           setHasExistingProfile(true);
           setTotalRiskPercentage(
-            Object.values(profile.portfolio).reduce((acc, curr) => acc + curr, 0)
+            Object.values(profile.target_portfolio).reduce((acc, curr) => acc + curr, 0)
           );
         }
       } catch (error) {
@@ -51,8 +56,7 @@ export default function Page() {
     loadWalletProfile();
   }, [address]);
 
-  const isFormValid = twitterHandle.trim() !== '' &&
-    farcasterHandle.trim() !== '' &&
+  const isFormValid = socialHandle.trim() !== '' &&
     totalRiskPercentage === 100;
 
   const handleSubmit = async () => {
@@ -64,26 +68,41 @@ export default function Page() {
     try {
       const data = {
         address,
-        twitter_handle: twitterHandle,
-        farcaster_handle: farcasterHandle,
-        portfolio: riskProfile
+        twitter_handle: socialType === 'twitter' ? socialHandle : null,
+        farcaster_handle: socialType === 'farcaster' ? socialHandle : null,
+        target_portfolio: riskProfile
       };
 
       if (hasExistingProfile && profileData?.id) {
-        // Atualizar perfil existente
+        // Update existing profile
         const updatedProfile = await updateWalletProfile(profileData.id, data);
         setProfileData(updatedProfile);
         toast.success('Profile updated successfully!');
       } else {
-        // Criar novo perfil
+        // Create new profile
         const newProfile = await saveWalletProfile(data);
         setProfileData(newProfile);
         setHasExistingProfile(true);
         toast.success('Profile created successfully!');
       }
-    } catch (error) {
-      setSubmitError('Failed to save profile. Please try again.');
-      console.error('Error:', error);
+    } catch (error: any) {
+      console.error('Error saving profile:', error);
+      let errorMessage = 'Failed to save profile. Please try again.';
+
+      // If the API returned specific errors, format the message
+      if (error && typeof error === 'object') {
+        if (error.address) {
+          errorMessage = "Address: " + error.address.join(' ');
+        } else if (error.twitter_handle) {
+          errorMessage = "Twitter handle: " + error.twitter_handle.join(' ');
+        } else if (error.farcaster_handle) {
+          errorMessage = "Farcaster handle: " + error.farcaster_handle.join(' ');
+        } else if (error.error) {
+          errorMessage = error.error;
+        }
+      }
+
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -97,8 +116,7 @@ export default function Page() {
       await deleteWalletProfile(profileData.id);
       // Limpar os estados
       setProfileData(null);
-      setTwitterHandle('');
-      setFarcasterHandle('');
+      setSocialHandle('');
       setRiskProfile(defaultRiskProfile);
       setHasExistingProfile(false);
       toast.success('Profile deleted successfully!');
@@ -114,9 +132,10 @@ export default function Page() {
     if (isFormValid) return '';
 
     const errors = [];
-    if (!twitterHandle.trim()) errors.push('X handle is required');
-    if (!farcasterHandle.trim()) errors.push('Farcaster handle is required');
-    if (totalRiskPercentage !== 100) errors.push('Risk profile must total 100%');
+    if (!socialHandle.trim())
+      errors.push(`${socialType === 'twitter' ? 'Twitter' : 'Farcaster'} handle is required`);
+    if (totalRiskPercentage !== 100)
+      errors.push('Risk profile must total 100%');
 
     return errors.join(' • ');
   };
@@ -149,36 +168,48 @@ export default function Page() {
           <>
             <IdentityWrapper />
             <div className="w-full max-w-md flex flex-col gap-4">
-              <div>
-                <div className="relative">
-                  <FaXTwitter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <span className="absolute inset-y-0 left-9 flex items-center text-gray-500">
-                    @
-                  </span>
+              {/* Novo bloco de seleção de rede social */}
+              <div className="flex gap-4">
+                <label className="flex items-center">
                   <input
-                    type="text"
-                    id="twitter"
-                    value={twitterHandle}
-                    onChange={(e) => setTwitterHandle(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 pl-14 pr-4 py-2 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="your_twitter_handle"
+                    type="radio"
+                    name="socialType"
+                    value="twitter"
+                    checked={socialType === 'twitter'}
+                    onChange={() => setSocialType('twitter')}
+                    className="mr-2"
                   />
-                </div>
+                  Twitter
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="socialType"
+                    value="farcaster"
+                    checked={socialType === 'farcaster'}
+                    onChange={() => setSocialType('farcaster')}
+                    className="mr-2"
+                  />
+                  Farcaster
+                </label>
               </div>
 
+              {/* Novo campo único para entrada do identificador */}
               <div>
                 <div className="relative">
-                  <SiFarcaster className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <span className="absolute inset-y-0 left-9 flex items-center text-gray-500">
-                    @
-                  </span>
+                  {socialType === 'twitter' ? (
+                    <FaXTwitter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  ) : (
+                    <SiFarcaster className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  )}
+                  <span className="absolute inset-y-0 left-9 flex items-center text-gray-500">@</span>
                   <input
                     type="text"
-                    id="farcaster"
-                    value={farcasterHandle}
-                    onChange={(e) => setFarcasterHandle(e.target.value)}
+                    id="social_handle"
+                    value={socialHandle}
+                    onChange={(e) => setSocialHandle(e.target.value)}
                     className="block w-full rounded-lg border border-gray-300 pl-14 pr-4 py-2 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="your_farcaster_handle"
+                    placeholder={`your_${socialType}_handle`}
                   />
                 </div>
               </div>
