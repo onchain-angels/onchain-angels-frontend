@@ -14,7 +14,7 @@ import Link from 'next/link';
 export default function Page() {
   const { isConnected, address } = useAccount();
   const [isLoading, setIsLoading] = useState(true);
-  const [socialType, setSocialType] = useState<'twitter' | 'farcaster'>('twitter');
+  const [socialType, setSocialType] = useState<'twitter' | 'farcaster'>('farcaster');
   const [socialHandle, setSocialHandle] = useState('');
   const [totalRiskPercentage, setTotalRiskPercentage] = useState(100);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -174,23 +174,24 @@ export default function Page() {
                   <input
                     type="radio"
                     name="socialType"
-                    value="twitter"
-                    checked={socialType === 'twitter'}
-                    onChange={() => setSocialType('twitter')}
-                    className="mr-2"
-                  />
-                  Twitter
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="socialType"
                     value="farcaster"
                     checked={socialType === 'farcaster'}
                     onChange={() => setSocialType('farcaster')}
                     className="mr-2"
                   />
                   Farcaster
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="socialType"
+                    value="twitter"
+                    checked={socialType === 'twitter'}
+                    onChange={() => setSocialType('twitter')}
+                    disabled
+                    className="mr-2"
+                  />
+                  X / Twitter<span className="text-gray-500">&nbsp;(soon)</span>
                 </label>
               </div>
 
