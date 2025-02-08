@@ -7,7 +7,7 @@ export default function TermsOfService() {
 
             <div className="prose prose-lg">
                 <p className="text-gray-600 mb-8">
-                    <strong>Effective Date:</strong> February 19, 2025
+                    <strong>Effective Date:</strong> February 9, 2025
                 </p>
 
                 <p className="mb-8">
