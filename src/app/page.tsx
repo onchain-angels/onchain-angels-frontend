@@ -4,6 +4,7 @@ import Footer from 'src/components/Footer';
 import IdentityWrapper from 'src/components/IdentityWrapper';
 import LoginButton from 'src/components/LoginButton';
 import { FaXTwitter } from "react-icons/fa6";
+import { FaShieldAlt, FaBrain, FaChartPie } from "react-icons/fa";
 import { SiFarcaster } from "react-icons/si";
 import { useState, useEffect } from 'react';
 import RiskProfileForm, { defaultRiskProfile, RiskProfile } from 'src/components/RiskProfileForm';
@@ -290,8 +291,60 @@ export default function Page() {
             </div>
           </>
         ) : (
-          <div className="flex h-48 w-full max-w-md items-center justify-center rounded-lg bg-gray-100 p-6 text-center text-gray-600">
-            Please connect your account to see your profile
+          <div className="flex flex-col min-h-screen items-center justify-center px-4">
+            {/* Hero Section */}
+            <section className="w-full max-w-3xl text-center py-8">
+              <h1 className="text-4xl font-bold text-black dark:text-white"><u>AI-Powered Insights</u> from Your Onchain Crypto Activity to <u>Help You Trade Smarter</u></h1>
+              <div className="mt-6 w-full max-w-2xl mx-auto">
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube-nocookie.com/embed/WFC4cG6w44s?si=2AcXdEknmIfzAB9c"
+                  title="OnchainAngels Introduction"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="w-full aspect-video rounded-lg shadow-lg"
+                ></iframe>
+              </div>
+            </section>
+    
+            {/* Features Section */}
+            <section className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 text-center py-8">
+              <div className="flex flex-col items-center">
+                <FaShieldAlt className="text-5xl text-blue-500" />
+                <h2 className="mt-4 text-xl font-semibold">Secure Profiles</h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
+                  Define your investment risk profile and store it securely with Nillion.
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <FaBrain className="text-5xl text-green-500" />
+                <h2 className="mt-4 text-xl font-semibold">AI Working With You</h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
+                Collaborate with AI to shape your agentic future with better decisions.
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <FaChartPie className="text-5xl text-purple-500" />
+                <h2 className="mt-4 text-xl font-semibold">Onchain Insights</h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
+                  Get realtime insights for your Base transactions to stay ahead.
+                </p>
+              </div>
+            </section>
+    
+            {/* CTA Section */}
+            <section className="w-full max-w-3xl text-center py-8">
+              <h2 className="text-3xl font-bold text-black dark:text-white">Ready to Get Started?</h2>
+              <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                Connect your wallet to create your risk profile and join the OnchainAngels community.
+              </p>
+              <div className="mt-6 flex justify-center">
+                <LoginButton />
+              </div>
+            </section>
           </div>
         )}
       </section>
